@@ -1,0 +1,49 @@
+# ======================================================================================================================
+# SERVICES
+# ======================================================================================================================
+
+services:
+
+    # --------------------------------------------------------------------------------
+    # DATABASES
+    # --------------------------------------------------------------------------------
+
+    # MariaDB
+    mariadb:
+      image: mariadb:10.6
+      working_dir: /application
+      restart: always
+      networks:
+        - labnet
+      volumes:
+        - maria_data:/var/lib/mysql
+      environment:
+        - MYSQL_ROOT_PASSWORD=Th3R00tPassw0rd
+        - MYSQL_DATABASE=appdb
+        - MYSQL_USER=appuser
+        - MYSQL_PASSWORD=letmein
+      ports:
+        - "3002:3306"
+
+    # phpMyAdmin
+    phpmyadmin:
+      depends_on: 
+        - mariadb
+      image: phpmyadmin/phpmyadmin
+      environment:
+        - PMA_ARBITRARY=1
+      restart: always
+      ports:
+        - "5051:80"
+      networks:
+        - labnet
+      volumes:
+        - pma_sessions:/sessions
+
+# ======================================================================================================================
+# VOLUMES
+# ======================================================================================================================
+
+volumes:       
+  maria_data:
+  pma_sessions:

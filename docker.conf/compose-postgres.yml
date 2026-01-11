@@ -1,0 +1,50 @@
+# ======================================================================================================================
+# SERVICES
+# ======================================================================================================================
+
+services:
+
+    # --------------------------------------------------------------------------------
+    # DATABASES
+    # --------------------------------------------------------------------------------
+
+    # PostgreSQL
+    pgdb:
+      image: postgres:16
+      restart: always
+      working_dir: /application
+      ports: 
+        - "3001:5432"
+      networks:
+        - labnet
+      volumes:
+        - pg_data:/var/lib/postgresql/data
+      environment:
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=letmein
+        - POSTGRES_DB=appdb      
+
+    # pgAdmin4
+    pgadmin:
+      image: dpage/pgadmin4:9.11
+      restart: always
+      networks:
+        - labnet      
+      volumes:
+        - pgadmin:/var/lib/pgadmin
+        - "./pgadmin.conf/servers.json:/pgadmin4/servers.json"
+      depends_on:
+        - pgdb
+      environment: 
+        PGADMIN_DEFAULT_EMAIL: admin@test.com
+        PGADMIN_DEFAULT_PASSWORD: letmein
+      ports:
+        - "5050:80"        
+
+# ======================================================================================================================
+# VOLUMES
+# ======================================================================================================================
+
+volumes:       
+  pg_data:
+  pgadmin:
